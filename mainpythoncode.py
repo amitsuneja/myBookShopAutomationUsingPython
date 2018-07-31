@@ -62,8 +62,10 @@ class Shelf:
         print("Your Shelf number = {}".format(self.myshelfnumber))
         if self.myshelfnumber == "dummykey":
             print("Sorry we are unable to locate the isbn number you have given")
+            return("dummy")
         else:
             self._print_book_details(self.myshelfnumber,self.isbntosearch)
+            return(self.myshelfnumber)
 
 
     def _find_shelfname_of_isbn(self, isbn_number_to_find_shelf_name,constant_var):
@@ -105,7 +107,32 @@ class Shelf:
                 else:
                     pass
 
- 
+    def _delete_bookbyisbn(self, isbntodelete):
+        self.isbntodelete = isbntodelete
+        self.searchbookmajorkey = self._search_by_isbn(0,self.isbntodelete)
+        if self.searchbookmajorkey == "dummy":
+            print("please check you might have entered invalid isbn number")
+        else:
+            self.question = input(" Are you sure you want to delete this book from inventory?")
+            if self.question.upper() ==  "yes".upper():
+                shelf[self.searchbookmajorkey][self.isbntodelete].counter = shelf[self.searchbookmajorkey][self.isbntodelete].counter - 1
+                if shelf[self.searchbookmajorkey][self.isbntodelete].counter == 0:
+                    shelf[self.searchbookmajorkey].pop(self.isbntodelete)
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -149,11 +176,12 @@ class Shelf:
 
 myShelfObj = Shelf("E:\\Ashish\MyCsvFiles\\myCurrentInventory.csv")
 myShelfObj._add_books_()
-myShelfObj._list_all_books()
-myShelfObj._search_by_isbn(0, "A11B12C13D17")
 print("\n")
 print("\n")
 print("\n")
 print("\n")
 print("I am searching a sub string now..............")
 myShelfObj._search_substring("Sumit")
+print("I am now in delete book function")
+myShelfObj._delete_bookbyisbn("A11B12C13D16")
+myShelfObj._list_all_books()
