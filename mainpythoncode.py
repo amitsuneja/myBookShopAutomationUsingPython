@@ -1,6 +1,10 @@
 import csv
 
 shelf = {}
+# CONSTANT_VAR_FOR_ISBN_SEARCH = 0
+# this way  it gives error
+# UnboundLocalError: local variable 'CONSTANT_VAR_FOR_ISBN_SEARCH' referenced before assignment
+
 class Book:
 
     def __init__(self, isbn, name, language, origin, authors, price, version):
@@ -47,19 +51,41 @@ class Shelf:
                     print("\n")
 
 
+    def _list_all_books(self):
+        for key in shelf.keys():
+            for subshelfkey in shelf[key].keys():
+                print("Name of Book = {}".format(shelf[key][subshelfkey].name))
+                print("ShelfName = {}".format(key))
+                print("ISBN/Subshelf = {}".format(subshelfkey))
+                print("Language Book = {}".format(shelf[key][subshelfkey].language))
+                print("Country of Origin = {}".format(shelf[key][subshelfkey].origin))
+                print("Authors of Book = {}".format(shelf[key][subshelfkey].authors))
+                print("price of Book = {}".format(shelf[key][subshelfkey].price))
+                print("Number of Copies in stock = {}".format(shelf[key][subshelfkey].counter))
+                print()
+
+
+    def _search_by_isbn(self,CONSTANT_VAR_FOR_ISBN_SEARCH):
+        isbntosearch = input("Please enter the isbn number to search book:")
+        print("You have entered ISBN ={}".format(isbntosearch))
+        for key in shelf.keys():
+            for subshelfkey in shelf[key].keys():
+                if shelf[key][subshelfkey].isbn == isbntosearch:
+                    CONSTANT_VAR_FOR_ISBN_SEARCH = 1
+        if CONSTANT_VAR_FOR_ISBN_SEARCH == 1:
+            print("Book is available in store")
+        else:
+            print("Book is NOT available in store")
+
+
+
+
+
+
+
+
+
 myShelfObj = Shelf("E:\\Ashish\MyCsvFiles\\myCurrentInventory.csv")
 myShelfObj._add_books_()
-print("_____________________________________________________________________________")
-
-for key in shelf.keys():
-    for subshelfkey in shelf[key].keys():
-        print("Name of Book = {}".format(shelf[key][subshelfkey].name))
-        print("ShelfName = {}".format(key))
-        print("ISBN/Subshelf = {}".format(subshelfkey))
-        print("Language Book = {}".format(shelf[key][subshelfkey].language))
-        print("Country of Origin = {}".format(shelf[key][subshelfkey].origin))
-        print("Authors of Book = {}".format(shelf[key][subshelfkey].authors))
-        print("price of Book = {}".format(shelf[key][subshelfkey].price))
-        print("Number of Copies in stock = {}".format(shelf[key][subshelfkey].counter))
-        print()
-
+myShelfObj._list_all_books()
+myShelfObj._search_by_isbn(0)
