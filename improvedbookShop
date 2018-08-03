@@ -1,31 +1,93 @@
+import csv
+my_book_shelf = {}
+
+
 class Book(object):
-     def __init__(self, name, author, language, isbn, price, count=1 ):
+
+    def __init__(self, name, author, language, isbn, price, count=1):
         self.name = name
         self.author = author
         self.language = language
         self.isbn = isbn
         self.price = price
         self.count = count
- class BookShelf(Book):
-     def __init__(self,class_test,shelf_dict ={}):
-        self.shelf_dict = shelf_dict
-        self.name = class_test.name
-        self.author = class_test.author
-        self.language = class_test.language
-        self.isbn = class_test.isbn
-        self.price = class_test.price
-     def add_book(self):
-        major_shelf = B.name[0:2].upper()
-        S=BookShelf(B)
-        S.shelf_dict[major_shelf]= {
-            B.isbn :
-                { "Name"   : B.name,
-                  "Author" : B.author,
-                  "Language": B.language,
-                  "Price" : B.price
-                  }
-            }
-        print(S.shelf_dict)
- B=Book("python Book","amit","eng","1111",200)
-S=BookShelf(B)
-S.add_book()
+
+    def print_book(self):
+        print("Book Name :", self.name)
+        print("Author :" , self.author)
+        print("Language :", self.language)
+        print("Isbn :", self.isbn)
+        print("Price :", self.price)
+        print("Number of Copies in Stock:", self.count)
+        print("\n")
+
+
+class BookShelf(object):
+
+    def get_majorshelf(self, name):
+        return(name[0:2].upper())
+
+    def search_object_withkey(self, mydict, mykey):
+        if mykey in mydict.keys():
+            return (mydict[mykey])
+
+    def search_object_with_value(self,mydict, myvalue):
+        for key1 in mydict.keys():
+            for key2 in mydict[key1].keys():
+                if myvalue in mydict[key1][key2].name or mydict[key1][key2].author:
+                    return(mydict[key1][key2])
+
+
+    def add_book(self, name, author, language, isbn, price, count=1):
+        major_shelf_name =self.get_majorshelf(name)
+        check_major_shelf = self.search_object_withkey(my_book_shelf, major_shelf_name)
+        if check_major_shelf is None:
+            my_book_shelf[major_shelf_name] = {}
+        check_minor_shelf = self.search_object_withkey(my_book_shelf[major_shelf_name], isbn)
+        if check_minor_shelf is None:
+            my_book = Book(name, author, language, isbn, price)
+            my_book_shelf[major_shelf_name][isbn] = my_book
+        else:
+            my_book_shelf[major_shelf_name][isbn].count += 1
+
+    def delete_book(self, isbn):
+        my_book = self.search_by_isbn(isbn)
+        if my_book is not None:
+            my_book.count -= 1
+            Book.print_book(my_book)
+        if my_book.count == 0:
+            major_shelf = self.get_majorshelf(my_book.name)
+            my_book_shelf[major_shelf].pop(isbn)
+
+    def upload_data(self, csv_file):
+        with open(csv_file, "rt") as my_csv_file:
+            my_csv_reader = csv.reader(my_csv_file)
+            for row in my_csv_reader:
+                self.add_book(row[0], row[1], row[2], row[3], row[4])
+
+    def search_by_isbn(self, isbn):
+        for key in my_book_shelf.keys():
+            check_book = self.search_object_withkey(my_book_shelf[key], isbn)
+            if check_book is not None:
+                book_found = my_book_shelf[key][isbn]
+                Book.print_book(book_found)
+                return(book_found)
+
+    def search_by_name(self, string):
+        book_found = self.search_object_with_value(my_book_shelf, string)
+        if book_found is not None:
+            Book.print_book(book_found)
+
+    def list_all_books(self):
+        for key in my_book_shelf.keys():
+            for isbn in my_book_shelf[key].keys():
+                book_found = my_book_shelf[key][isbn]
+                Book.print_book(book_found)
+
+
+class Basket(object):
+
+    def __init__(self):
+        self.book_list = list()
+        self.total_price = 0
+
