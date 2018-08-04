@@ -14,7 +14,7 @@ class Book(object):
 
     def print_book(self):
         print("Book Name :", self.name)
-        print("Author :" , self.author)
+        print("Author :", self.author)
         print("Language :", self.language)
         print("Isbn :", self.isbn)
         print("Price :", self.price)
@@ -24,19 +24,21 @@ class Book(object):
 
 class BookShelf(object):
 
-    def get_majorshelf(self, name):
-        return(name[0:2].upper())
+    @staticmethod
+    def get_majorshelf(name):
+        return (name[0:2].upper())
 
-    def search_object_withkey(self, mydict, mykey):
+    @staticmethod
+    def search_object_withkey(mydict, mykey):
         if mykey in mydict.keys():
             return (mydict[mykey])
 
-    def search_object_with_value(self,mydict, myvalue):
+    @staticmethod
+    def search_object_with_value(mydict, myvalue):
         for key1 in mydict.keys():
             for key2 in mydict[key1].keys():
                 if myvalue in mydict[key1][key2].name or mydict[key1][key2].author:
                     return(mydict[key1][key2])
-
 
     def add_book(self, name, author, language, isbn, price, count=1):
         major_shelf_name =self.get_majorshelf(name)
@@ -69,14 +71,15 @@ class BookShelf(object):
             check_book = self.search_object_withkey(my_book_shelf[key], isbn)
             if check_book is not None:
                 book_found = my_book_shelf[key][isbn]
-                return(book_found)
+                return book_found
 
     def search_by_name(self, string):
         book_found = self.search_object_with_value(my_book_shelf, string)
         if book_found is not None:
             Book.print_book(book_found)
 
-    def list_all_books(self):
+    @staticmethod
+    def list_all_books():
         for key in my_book_shelf.keys():
             for isbn in my_book_shelf[key].keys():
                 book_found = my_book_shelf[key][isbn]
@@ -85,9 +88,12 @@ class BookShelf(object):
 
 class Basket(BookShelf):
 
-    def __init__(self):
+    def __init__(self, cust_name, cust_phone, cust_address):
         self.book_list = list()
         self.total_price = 0
+        self.cust_name = cust_name
+        self.cust_phone = cust_phone
+        self.cust_address = cust_address
 
     def add_book_to_basket(self, isbn):
         my_book = BookShelf.search_by_isbn(self, isbn)
@@ -96,13 +102,13 @@ class Basket(BookShelf):
         BookShelf.delete_book(self, isbn)
         print("Cost of Basket:", self.total_price)
 
-    def delete_book_from_basket(self,isbn):
+    def delete_book_from_basket(self, isbn):
         j = len(self.book_list)
         for i in range(0, j):
             if self.book_list[i].isbn == isbn:
                 k = i
         deleted_book = self.book_list.pop(k)
-        BookShelf.add_book(self, deleted_book.name,deleted_book.author,deleted_book.language,deleted_book.isbn,deleted_book.price)
+        BookShelf.add_book(self, deleted_book.name, deleted_book.author, deleted_book.language, deleted_book.isbn, deleted_book.price)
         self.total_price = self.total_price - int(deleted_book.price)
         print("Cost of Basket:", self.total_price)
 
@@ -111,10 +117,33 @@ class Basket(BookShelf):
             Book.print_book(book)
 
 
+class CashCounter(Basket):
+
+    def __init__(self, class_b):
+        self.cust_name = class_b.cust_name
+        self.cust_phone = class_b.cust_phone
+        self.cust_address = class_b.cust_address
+        self.total_price = class_b.total_price
+        self.book_list = class_b.book_list
+
+    def sell_book(self):
+        Basket.show_basket(self)
+        print("We received sum of RS {} from you".format(self.total_price))
+        print("______Thanks for Shopping with Amazon Store______")
+        print("Name :  ", self.cust_name)
+        print("ph: ", self.cust_phone)
+        print("Address: ", self.cust_address)
+
+
+
 S = BookShelf()
 S.upload_data("E:\\Ashish\MyCsvFiles\\myCurrentInventory.csv")
 print("____________________________")
-B=Basket()
+B = Basket("Amit Suneja", 9717123330, "D-802, Vrinda City")
 B.add_book_to_basket("99")
 B.add_book_to_basket("111")
 B.delete_book_from_basket("111")
+C = CashCounter(B)
+C.sell_book()
+
+
