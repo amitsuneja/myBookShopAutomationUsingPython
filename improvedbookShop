@@ -54,7 +54,6 @@ class BookShelf(object):
         my_book = self.search_by_isbn(isbn)
         if my_book is not None:
             my_book.count -= 1
-            Book.print_book(my_book)
         if my_book.count == 0:
             major_shelf = self.get_majorshelf(my_book.name)
             my_book_shelf[major_shelf].pop(isbn)
@@ -70,7 +69,6 @@ class BookShelf(object):
             check_book = self.search_object_withkey(my_book_shelf[key], isbn)
             if check_book is not None:
                 book_found = my_book_shelf[key][isbn]
-                Book.print_book(book_found)
                 return(book_found)
 
     def search_by_name(self, string):
@@ -85,9 +83,38 @@ class BookShelf(object):
                 Book.print_book(book_found)
 
 
-class Basket(object):
+class Basket(BookShelf):
 
     def __init__(self):
         self.book_list = list()
         self.total_price = 0
 
+    def add_book_to_basket(self, isbn):
+        my_book = BookShelf.search_by_isbn(self, isbn)
+        self.book_list.append(my_book)
+        self.total_price = self.total_price + int(my_book.price)
+        BookShelf.delete_book(self, isbn)
+        print("Cost of Basket:", self.total_price)
+
+    def delete_book_from_basket(self,isbn):
+        j = len(self.book_list)
+        for i in range(0, j):
+            if self.book_list[i].isbn == isbn:
+                k = i
+        deleted_book = self.book_list.pop(k)
+        BookShelf.add_book(self, deleted_book.name,deleted_book.author,deleted_book.language,deleted_book.isbn,deleted_book.price)
+        self.total_price = self.total_price - int(deleted_book.price)
+        print("Cost of Basket:", self.total_price)
+
+    def show_basket(self):
+        for book in self.book_list:
+            Book.print_book(book)
+
+
+S = BookShelf()
+S.upload_data("E:\\Ashish\MyCsvFiles\\myCurrentInventory.csv")
+print("____________________________")
+B=Basket()
+B.add_book_to_basket("99")
+B.add_book_to_basket("111")
+B.delete_book_from_basket("111")
